@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-## Carga de módulos
+## Carga de módulos M. Padron y J. Fornet
 # ------------------------------------------------------------------------------
 import json
 from machine import Pin, PWM, ADC, SPI, Timer
