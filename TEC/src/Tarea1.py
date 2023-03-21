@@ -15,7 +15,7 @@ SOURCE = 'Procesamiento de Señales'
 led = PWM(Pin(14))
 signal_in = ADC(26)
 signal_out = PWM(Pin(14))
-signal_out.freq(10000)
+signal_out.freq(10_000)
 
 # ------------------------------------------------------------------------------
 # ADC
@@ -66,7 +66,8 @@ def loop():
               t = waitNextPeriod(tLast)
               u = signal((t-t0)*1e-6)
               y = readInput()
-              writeOutput(u)
+              led.duty_u16(u);
+              writeOutput(int(u))
             except ValueError:
               pass
             data.append([(t-t0)*1e-6, u, y])
@@ -83,7 +84,9 @@ BUFFER_SIZE = 10 # Muestras en el buffer
 
 def signal(t):
   # Pon aquí el código necesario para generar tu señal.
-  return 1
+  freq = 0.01
+  signal_out = math.sin( 2*math.pi*freq * t) * 65_025
+  return int(math.fabs(signal_out))
 
 # ------------------------------------------------------------------------------
 # Comienza la ejecución
