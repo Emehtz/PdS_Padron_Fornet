@@ -16,6 +16,7 @@ led = PWM(Pin(14))
 signal_in = ADC(26)
 signal_out = PWM(Pin(14))
 signal_out.freq(10_000)
+buffer=[0,0,0,0,0,0,0,0,0,0]
 
 # ------------------------------------------------------------------------------
 # ADC
@@ -38,6 +39,25 @@ def parse_command(cmd):
         # Escribe aquí el código para interpretar las órdenes recibidas
     except Exception as e:
         print('{"result":"unknown or malformed command"}')
+        
+def FastFT(buffer)
+# Creamos Wk*n con N (matriz 10x10 con exp(-j*2*pi*k*n/10) variando k en las columnas y n en las filas o viceversa) k y n varia de
+# 0  a 9 (0-(N-1))
+
+# Obtenemos la Wk*n con N/2 a partir de la anterior sumandole a los valores de las primeras 5 filas y 5 columnas por
+# exp(2) para obtener una matrix 5x5 con exp(-j*2*pi*k*n/5 ) con k y n variando de 0 a 4 (0-((N/2)-1))
+
+# Generamos las funciones f(n)=x(2*n) y g(n)=x(2*n+1) (Empieza haciendo esto, lo anterior esta mal)
+Empieza haciendo esto, lo anterior esta mal
+
+# Calculamos la DFT de de f(n) (F(k)) usando Wk*n con N/2 haciendo el sumatorio desde 0 hasta 4 de f(n)*Wk*n, siendo K
+#k la variable independiente de la DFT
+
+# Repetimos el proceso anterior para calcular G(k) a partir de g(n)
+
+# Obtenmos la DFT X[k] a partir de de las F(k) y G(k) sabiendo que para k menor a 5 la formula es
+#X(k)=F(k) + W*G(k) y para k mayor a 5 X(k)=F(k-5)-W*G(k-5)
+    
 # ------------------------------------------------------------------------------
 # Bucle principal
 # ------------------------------------------------------------------------------
@@ -67,24 +87,29 @@ def loop():
               u = signal((t-t0)*1e-6)
               y = readInput()
               led.duty_u16(u);
+              buffer[i]=y
               writeOutput(int(u))
             except ValueError:
               pass
-            data.append([(t-t0)*1e-6, u, y])
-            tLast = t
+        data.append([(t-t0)*1e-6, u, y])
+        tLast = t
         if spoll.poll(0):
             cmd = str(sys.stdin.readline())
             parse_command(cmd)
         print(f'{u} {y}')
+        
+        
 # ------------------------------------------------------------------------------
 # INSTRUCCIONES
 # ------------------------------------------------------------------------------
 PERIOD_US = 1000 # Periodo de muestreo en microsegundos
 BUFFER_SIZE = 10 # Muestras en el buffer
 
+
+
 def signal(t):
   # Pon aquí el código necesario para generar tu señal.
-  freq = 0.01
+  freq = 0.05
   signal_out = math.sin( 2*math.pi*freq * t) * 65_025
   return int(math.fabs(signal_out))
 
@@ -92,3 +117,4 @@ def signal(t):
 # Comienza la ejecución
 # ------------------------------------------------------------------------------
 loop()
+
