@@ -41,22 +41,23 @@ def parse_command(cmd):
         print('{"result":"unknown or malformed command"}')
         
 def FastFT(buffer)
-# Creamos Wk*n con N (matriz 10x10 con exp(-j*2*pi*k*n/10) variando k en las columnas y n en las filas o viceversa) k y n varia de
-# 0  a 9 (0-(N-1))
+# Creamos Wk*n con N/2 (matriz 5x5 con exp(-j*2*pi*k*n/5) variando k en las filas y n en las columnas o viceversa) k y n varia de
+# 0  a 4 (0-((N/2)-1)).
 
-# Obtenemos la Wk*n con N/2 a partir de la anterior sumandole a los valores de las primeras 5 filas y 5 columnas por
-# exp(2) para obtener una matrix 5x5 con exp(-j*2*pi*k*n/5 ) con k y n variando de 0 a 4 (0-((N/2)-1))
+# Necesitamos una matriz Wk con N (matriz 1x5 ó 5x1 con exp(-j*2*pi*k/10) variando k de 0-4, para ello podemos usar la matriz anterios
+# fijando n a 1, y sumando a cada elemento de esa fila o columna por exp(1/2). Esto también se puede hacer en el último paso
+# directamente porque es en unico momento que se usará esta matriz.
 
-# Generamos las funciones f(n)=x(2*n) y g(n)=x(2*n+1) (Empieza haciendo esto, lo anterior esta mal)
-Empieza haciendo esto, lo anterior esta mal
+# Generamos las funciones f(n)=x(2*n) y g(n)=x(2*n+1).
 
 # Calculamos la DFT de de f(n) (F(k)) usando Wk*n con N/2 haciendo el sumatorio desde 0 hasta 4 de f(n)*Wk*n, siendo K
-#k la variable independiente de la DFT
+#k la variable independiente de la DFT.
 
-# Repetimos el proceso anterior para calcular G(k) a partir de g(n)
+# Repetimos el proceso anterior para calcular G(k) a partir de g(n).
 
 # Obtenmos la DFT X[k] a partir de de las F(k) y G(k) sabiendo que para k menor a 5 la formula es
-#X(k)=F(k) + W*G(k) y para k mayor a 5 X(k)=F(k-5)-W*G(k-5)
+#X(k)=F(k) + Wk*G(k) y para k mayor a 5 X(k)=F(k-5)-W(k-5)*G(k-5).
+
     
 # ------------------------------------------------------------------------------
 # Bucle principal
