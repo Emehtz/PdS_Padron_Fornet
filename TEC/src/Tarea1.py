@@ -4,6 +4,7 @@
 import json
 from machine import Pin, PWM, ADC, SPI, Timer
 import math
+import cmath
 import time
 import sys
 import uselect
@@ -40,25 +41,53 @@ def parse_command(cmd):
     except Exception as e:
         print('{"result":"unknown or malformed command"}')
         
-def FastFT(buffer)
+def FastFT(buffer):
 # Creamos Wk*n con N/2 (matriz 5x5 con exp(-j*2*pi*k*n/5) variando k en las filas y n en las columnas o viceversa) k y n varia de
 # 0  a 4 (0-((N/2)-1)).
-
+    Wkn = [[0 for n in range(5)] for k in range(5)] # Matriz de ceros (5x5)
+for n in range (5):
+    for k in range (5):
+        Wkn[n][k]=cmath.exp(-1j*2*cmath.pi*k*n/5)
 # Necesitamos una matriz Wk con N (matriz 1x5 ó 5x1 con exp(-j*2*pi*k/10) variando k de 0-4, para ello podemos usar la matriz anterios
-# fijando n a 1, y sumando a cada elemento de esa fila o columna por exp(1/2). Esto también se puede hacer en el último paso
-# directamente porque es en unico momento que se usará esta matriz.
-
+# fijando n a 1, y sumando a cada elemento de esa fila o columna por exp(1/2). 
+Wk = [0 for n in range(5)]  # Matriz de ceros (5x1)
+for k in range (5):
+    Wk[k]=Wkn[1][k]*cmath.exp(0.5)
 # Generamos las funciones f(n)=x(2*n) y g(n)=x(2*n+1).
+buffer=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+fn=[0 for n in range(5)]
+gn=[0 for n in range(5)]
+for i in range (10):
+    if i % 2 == 0:
+        n=int(i/2)
+        fn[n]=buffer[i]         
+    else:
+        n=int((i-1)/2)
+        gn[n]=buffer[i]         
 
 # Calculamos la DFT de de f(n) (F(k)) usando Wk*n con N/2 haciendo el sumatorio desde 0 hasta 4 de f(n)*Wk*n, siendo K
 #k la variable independiente de la DFT.
 
+Fk=[0 for n in range(5)]
+for k in range (5):
+    for n in range (5):
+        Fk[k]=fn[k]*Wkn[n][k]+Fk[k]
+
 # Repetimos el proceso anterior para calcular G(k) a partir de g(n).
+
+Gk=[0 for n in range(5)]
+for k in range (5):
+    for n in range (5):
+        Gk[k]=gn[k]*Wkn[n]+Gk[k]
 
 # Obtenmos la DFT X[k] a partir de de las F(k) y G(k) sabiendo que para k menor a 5 la formula es
 #X(k)=F(k) + Wk*G(k) y para k mayor a 5 X(k)=F(k-5)-W(k-5)*G(k-5).
 
-    
+Xk=[0 for n in range(10)]
+for k in range (5):
+    Xk[k]=Fk[k]+Wk[k]*Gk[k]
+for k in range (5):
+    Xk[k+5]=Fk[k]-Wk[k]*Gk[k]
 # ------------------------------------------------------------------------------
 # Bucle principal
 # ------------------------------------------------------------------------------
